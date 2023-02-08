@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © MagePal LLC. All rights reserved.
+ * See COPYING.txt for license details.
+ * http://www.magepal.com | support@magepal.com
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<!-- For Magento < 2.2 -->
+	<preference for="Magento\Framework\Mail\Transport" type="MagePal\CustomSmtp\Model\Transport"/>
+	<type name="MagePal\CustomSmtp\Model\Transport">
+		<plugin sortOrder="100" name="magePalCustomSmtpTransport" type="MagePal\CustomSmtp\Plugin\Mail\TransportPlugin"/>
+	</type>
+
+	<!-- For Magento Eq 2.2 -->
+	<type name="Magento\Framework\Mail\TransportInterface">
+		<plugin sortOrder="100" name="magePalCustomSmtpTransportInterface" type="MagePal\CustomSmtp\Plugin\Mail\TransportPlugin"/>
+	</type>
+
+	<type name="Magento\Framework\Mail\Template\TransportBuilder">
+		<plugin sortOrder="1" name="magePalCustomSmtpTransportBuilder"
+				type="MagePal\CustomSmtp\Plugin\Mail\Template\TransportBuilderPlugin"/>
+	</type>
+
+	<type name="Magento\Framework\Mail\Template\TransportBuilderByStore">
+		<plugin sortOrder="1" name="magePalCustomSmtpTransportBuilderByStore"
+				type="MagePal\CustomSmtp\Plugin\Mail\Template\TransportBuilderByStorePlugin"/>
+	</type>
+
+	<type name="Magento\Config\Model\Config\TypePool">
+		<arguments>
+			<argument name="environment" xsi:type="array">
+				<item name="magepal_custom_smtp/general/active" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/ssl" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/auth" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/smtphost" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/smtpport" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/username" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/password" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/set_reply_to" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/set_from" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/custom_from_email" xsi:type="string">1</item>
+				<item name="magepal_custom_smtp/general/return_path_email" xsi:type="string">1</item>
+			</argument>
+		</arguments>
+	</type>
+</config>

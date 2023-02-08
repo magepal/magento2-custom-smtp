@@ -1,0 +1,20 @@
+<?php
+/**
+ * Copyright © MagePal LLC. All rights reserved.
+ * See COPYING.txt for license details.
+ * http://www.magepal.com | support@magepal.com
+ */
+?>
+
+<?php /** @var $block MagePal\CustomSmtp\Block\Adminhtml\System\Config\ValidateConfigButton **/ ?>
+<?= $block->getButtonHtml() ?>
+
+<script type="text/x-magento-init">
+    {
+        "#custom_smtp_debug_result_button": {
+            "magePalCustomSmtpValidateConfig": {
+                "postUrl":"<?= $block->escapeUrl($block->getAdminUrl()) ?>"
+            }
+        }
+    }
+</script>

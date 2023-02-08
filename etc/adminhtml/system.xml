@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © MagePal LLC. All rights reserved.
+ * See COPYING.txt for license details.
+ * https://www.magepal.com | support@magepal.com
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magepal" sortOrder="400" translate="label">
+            <label>MagePal</label>
+        </tab>
+        <section id="magepal_custom_smtp" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="5" translate="label">
+            <label>SMTP Configuration</label>
+            <tab>magepal</tab>
+            <resource>MagePal_CustomSmtp::magepal_custom_smtp</resource>
+            <group id="general" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="0" translate="label">
+                <attribute type="expanded">1</attribute>
+                <label>SMTP Configurations and Settings (Gmail/Google/AWS/Office365 etc)</label>
+                <comment>
+                    <![CDATA[
+                    <div class="magepal-info">
+                        Copyright © 2022 <a href="https://www.magepal.com/magento2/extensions.html?utm_source=smtp&utm_medium=admin" target="_blank">MagePal, LLC</a>
+                        <a href="https://www.magepal.com/help/docs/smtp-magento/?utm_source=smtp&utm_medium=admin#documentation" target="_blank">Documentation</a>
+                        <a href="https://www.magepal.com/help/docs/smtp-magento/?utm_source=smtp&utm_medium=admin#support">Support</a>
+                        <a href="https://www.magepal.com/help/docs/smtp-magento?utm_source=smtp&utm_medium=admin#current_version" target="_blank">Latest Version</a>
+                        <a href="https://www.magepal.com/custom-smtp.html?utm_source=smtp&utm_medium=admin" target="_blank">Extension Detail</a>
+                        <a href="https://www.magepal.com/magento2/extensions.html?utm_source=smtp&utm_medium=admin" target="_blank">More Extensions</a>
+                    </div>
+                    <div id="magepal-promo">
+                        Get more from your order confirmation emails by promoting other complementary products!
+                        Learn more about our new <a href="http://bit.ly/smtp-esp" target="_blank">Enhanced Transactional Email</a> extension.
+                    </div>
+                    <hr class="magepal-hr" />
+                  ]]>
+                </comment>
+                <field id="composer_version" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Composer Version</label>
+                    <frontend_model>MagePal\CustomSmtp\Block\Adminhtml\System\Config\Form\Composer\Version</frontend_model>
+                </field>
+                <field id="active" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Local client name (domain or IP)</label>
+                    <comment>Default: localhost</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="auth" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Authentication method</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Smtpauth</source_model>
+                    <comment>Default: login</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="ssl" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SSL type</label>
+                    <source_model>MagePal\CustomSmtp\Model\Config\Source\Authtype</source_model>
+                    <comment>Default: ssl</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="smtphost" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SMTP Host</label>
+                    <comment>The server name (eg smtp.gmail.com).</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="smtpport" translate="label" type="text" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SMTP Port</label>
+                    <validate>validate-number</validate>
+                    <frontend_class>validate-number</frontend_class>
+                    <comment>Use 465 (ssl) or 587 (tls) if port 25 is throttled or blocked.</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="username" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Username</label>
+                    <comment>Email Address or Account ID.</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="password" translate="label" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Password</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="set_reply_to" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Set Reply-to</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="set_from" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Set From</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesnocustom</source_model>
+                    <comment>Use Return-Path email address for the From address rather than the Magento supplied value.</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="custom_from_email" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>From Email Address</label>
+                    <validate>validate-email</validate>
+                    <backend_model>Magento\Config\Model\Config\Backend\Email\Address</backend_model>
+                    <comment>Use specify From Address instead of Magento supplied value.</comment>
+                    <depends>
+                        <field id="set_from">2</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="set_return_path" translate="label" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Set Return-Path</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesnocustom</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="return_path_email" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Return-Path Email</label>
+                    <validate>validate-email</validate>
+                    <backend_model>Magento\Config\Model\Config\Backend\Email\Address</backend_model>
+                    <depends>
+                        <field id="set_return_path">2</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <group id="debug" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="100">
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <label>Test Email Server Configuration Settings</label>
+                    <attribute type="expanded">0</attribute>
+                    <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                    <field id="email" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Email address</label>
+                        <comment>Email address to send test to.</comment>
+                        <frontend_class>validate-email</frontend_class>
+                    </field>
+                    <field id="from_email" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>From Email Address</label>
+                        <comment>Leave blank to use username/email address instead</comment>
+                        <frontend_class>validate-email</frontend_class>
+                    </field>
+                    <field id="button" translate="label comment" type="button" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <frontend_model>MagePal\CustomSmtp\Block\Adminhtml\System\Config\ValidateConfigButton</frontend_model>
+                    </field>
+                </group>
+            </group>
+        </section>
+    </system>
+</config>
