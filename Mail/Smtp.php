@@ -25,11 +25,11 @@ use MagePal\CustomSmtp\Model\Store;
  * Class Smtp
  * For Magento <= 2.2.7
  */
-
 class Smtp
-{    /**
- * @var Data
- */
+{
+    /**
+     * @var Data
+     */
     protected $dataHelper;
 
     /**
@@ -98,7 +98,9 @@ class Smtp
             }
 
             if (!$zendMessage instanceof Message) {
-                throw new MailException('Not instance of Message');
+                throw new MailException(
+                    __('Not instance of Message')
+                );
             }
         } catch (Exception $e) {
             $zendMessage = Message::fromString($message->getRawMessage());
