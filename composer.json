@@ -24,7 +24,7 @@
         "magepal/magento2-core": ">=1.1.11"
     },
     "license": [
-        "Proprietary"
+        "proprietary"
     ],
     "homepage": "https://www.magepal.com/",
     "support": {
