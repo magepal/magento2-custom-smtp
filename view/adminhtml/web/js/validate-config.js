@@ -16,7 +16,7 @@ define([
 
         /** global var configForm **/
         configForm.find('[id^=magepal_custom_smtp]').find(':input').serializeArray().map(function (field) {
-            var name = field.name.match(/groups\[custom_smtp\]?(\[groups\]\[debug\])?\[fields\]\[(.*)\]\[value]/);
+            var name = field.name.match(/groups\[general\]?(\[groups\]\[debug\])?\[fields\]\[(.*)\]\[value]/);
 
             /**
              * groups[custom_smtp][groups][debug][fields][email][value]
