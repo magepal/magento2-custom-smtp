@@ -23,7 +23,6 @@ use MagePal\CustomSmtp\Model\Store;
 
 /**
  * Class Smtp
- * For Magento <= 2.2.7
  */
 class Smtp
 {

@@ -13,6 +13,7 @@ use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Framework\Mail\Message;
 use Magento\Framework\Mail\TransportInterface;
 use MagePal\CustomSmtp\Helper\Data;
+use MagePal\CustomSmtp\Mail\SmtpFactory;
 use MagePal\CustomSmtp\Mail\Smtp;
 use MagePal\CustomSmtp\Model\Store;
 
@@ -27,6 +28,9 @@ class TransportPlugin
      * @var Store
      */
     protected $storeModel;
+    /**
+     * @var Smtp
+     */
     private SmtpFactory $smtpFactory;
 
     /**
@@ -60,6 +64,7 @@ class TransportPlugin
             $message = $subject->getMessage();
 
             if ($message instanceof Message || $message instanceof EmailMessageInterface) {
+                /** @var Smtp $smtp */
                 $smtp = $this->smtpFactory->create(
                     ['dataHelper' => $this->dataHelper, 'storeModel' => $this->storeModel]
                 );
