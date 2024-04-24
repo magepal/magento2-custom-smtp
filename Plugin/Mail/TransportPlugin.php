@@ -13,9 +13,11 @@ use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Framework\Mail\Message;
 use Magento\Framework\Mail\TransportInterface;
 use MagePal\CustomSmtp\Helper\Data;
-use MagePal\CustomSmtp\Mail\SmtpFactory;
-use MagePal\CustomSmtp\Mail\Smtp;
+use MagePal\CustomSmtp\Mail\ZF1\Smtp as ZF1Smtp;
+use MagePal\CustomSmtp\Mail\ZF2\Smtp as ZF2Smtp;
 use MagePal\CustomSmtp\Model\Store;
+use Zend_Mail;
+use Zend_Mail_Exception;
 
 class TransportPlugin
 {
@@ -28,10 +30,6 @@ class TransportPlugin
      * @var Store
      */
     protected $storeModel;
-    /**
-     * @var Smtp
-     */
-    private SmtpFactory $smtpFactory;
 
     /**
      * @param Data $dataHelper
@@ -39,18 +37,17 @@ class TransportPlugin
      */
     public function __construct(
         Data $dataHelper,
-        Store $storeModel,
-        SmtpFactory $smtpFactory
+        Store $storeModel
     ) {
         $this->dataHelper = $dataHelper;
         $this->storeModel = $storeModel;
-        $this->smtpFactory = $smtpFactory;
     }
 
     /**
      * @param TransportInterface $subject
      * @param Closure $proceed
      * @throws MailException
+     * @throws Zend_Mail_Exception
      */
     public function aroundSendMessage(
         TransportInterface $subject,
@@ -63,11 +60,13 @@ class TransportPlugin
 
             $message = $subject->getMessage();
 
-            if ($message instanceof Message || $message instanceof EmailMessageInterface) {
-                /** @var Smtp $smtp */
-                $smtp = $this->smtpFactory->create(
-                    ['dataHelper' => $this->dataHelper, 'storeModel' => $this->storeModel]
-                );
+            //ZendMail1 - Magento <= 2.2.7
+            //ZendMail2 - Magento >= 2.2.8
+            if ($message instanceof Zend_Mail) {
+                $smtp = new ZF1Smtp($this->dataHelper, $this->storeModel);
+                $smtp->sendSmtpMessage($message);
+            } elseif ($message instanceof Message || $message instanceof EmailMessageInterface) {
+                $smtp = new ZF2Smtp($this->dataHelper, $this->storeModel);
                 $smtp->sendSmtpMessage($message);
             } else {
                 $proceed();

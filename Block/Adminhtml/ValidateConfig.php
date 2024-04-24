@@ -8,16 +8,15 @@
 namespace MagePal\CustomSmtp\Block\Adminhtml;
 
 use Exception;
-use Laminas\Mime\Message as MineMessage;
-use Laminas\Mime\Part as MinePart;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Validator\EmailAddress;
 use MagePal\CustomSmtp\Helper\Data;
 use MagePal\CustomSmtp\Model\Email;
-use Laminas\Mail\Message;
-use Laminas\Mail\Transport\Smtp;
-use Laminas\Mail\Transport\SmtpOptions;
+use Zend_Mail;
+use Zend_Mail_Exception;
+use Zend_Mail_Transport_Smtp;
+use Zend_Validate_Exception;
 
 class ValidateConfig extends Template
 {
@@ -196,7 +195,7 @@ class ValidateConfig extends Template
 
         $this->toAddress = $this->getConfig('email') ? $this->getConfig('email') : $this->getConfig('username');
 
-        $this->fromAddress = trim((string) $this->getConfig('from_email'));
+        $this->fromAddress = trim($this->getConfig('from_email'));
 
         if (!$this->emailAddressValidator->isValid($this->fromAddress)) {
             $this->fromAddress = $this->toAddress;
@@ -246,7 +245,7 @@ class ValidateConfig extends Template
     /**
      * Todo: update to new Zend Framework SMTP
      * @return array
-     * @throws \Exception
+     * @throws Zend_Mail_Exception
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function validateServerEmailSetting()
@@ -255,6 +254,7 @@ class ValidateConfig extends Template
 
         $username = $this->getConfig('username');
         $password = $this->getConfig('password');
+
         $auth = strtolower($this->getConfig('auth'));
 
         //if default view
@@ -268,31 +268,30 @@ class ValidateConfig extends Template
             }
         }
 
-        $name = 'Test from MagePal SMTP';
-        $from = trim((string) $this->getConfig('from_email'));
-        $from = filter_var($from, FILTER_VALIDATE_EMAIL) ? $from : $username;
-        $this->fromAddress = filter_var($username, FILTER_VALIDATE_EMAIL) ? $username : $from;
-        $htmlBody = $this->_email->setTemplateVars(['hash' => $this->hash])->getEmailBody();
-
         $transport = $this->getMailTransportSmtp();
 
-        $bodyMessage    = new MinePart($htmlBody);
-        $bodyMessage->type = 'text/html';
+        $from = trim($this->getConfig('from_email'));
+        $from = filter_var($from, FILTER_VALIDATE_EMAIL) ? $from : $username;
+        $this->fromAddress = filter_var($username, FILTER_VALIDATE_EMAIL) ? $username : $from;
 
-        $body = new MineMessage();
-        $body->addPart($bodyMessage);
+        //Create email
+        $name = 'Test from MagePal SMTP';
+        $mail = new Zend_Mail();
+        $mail->setFrom($this->fromAddress, $name);
+        $mail->addTo($this->toAddress, 'MagePal SMTP');
+        $mail->setSubject('Hello from MagePal SMTP (1 of 2)');
 
-        $message = new Message();
-        $message->addTo($this->toAddress, 'MagePal SMTP')
-            ->addFrom($this->fromAddress, $name)
-            ->setSubject('Hello from MagePal SMTP (1 of 2)')
-            ->setBody($body)
-            ->setEncoding('UTF-8');
+        $htmlBody = $this->_email->setTemplateVars(['hash' => $this->hash])->getEmailBody();
+
+        $mail->setBodyHtml($htmlBody);
 
         $result = $this->error();
 
         try {
-            $transport->send($message);
+            //only way to prevent zend from giving an error
+            if (!$mail->send($transport) instanceof Zend_Mail) {
+                $result =  $this->error(true, __('Invalid class, not instance of Zend Mail'));
+            }
         } catch (Exception $e) {
             $result =  $this->error(true, __($e->getMessage()));
         }
@@ -304,35 +303,29 @@ class ValidateConfig extends Template
     {
         $username = $this->getConfig('username');
         $password = $this->getConfig('password');
+
         $auth = strtolower($this->getConfig('auth'));
 
-        $optionsArray = [
+        //SMTP server configuration
+        $smtpHost = $this->getConfig('smtphost');
+
+        $smtpConf = [
             'name' => $this->getConfig('name'),
-            'host' => $this->getConfig('smtphost'),
             'port' => $this->getConfig('smtpport')
         ];
 
         if ($auth != 'none') {
-            $optionsArray['connection_class'] = $auth;
-            $optionsArray['connection_config'] = [
-                'username' => $username,
-                'password' => $password,
-            ];
+            $smtpConf['auth'] = $auth;
+            $smtpConf['username'] = $username;
+            $smtpConf['password'] = $password;
         }
 
         $ssl = $this->getConfig('ssl');
         if ($ssl != 'none') {
-            $optionsArray = array_merge_recursive(
-                ['connection_config' => ['ssl' => $ssl]],
-                $optionsArray
-            );
+            $smtpConf['ssl'] = $ssl;
         }
 
-        $options   = new SmtpOptions($optionsArray);
-        $transport = new Smtp();
-        $transport->setOptions($options);
-
-        return $transport;
+        return new Zend_Mail_Transport_Smtp($smtpHost, $smtpConf);
     }
 
     /**

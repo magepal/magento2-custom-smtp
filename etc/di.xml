@@ -7,6 +7,13 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<!-- For Magento < 2.2 -->
+	<preference for="Magento\Framework\Mail\Transport" type="MagePal\CustomSmtp\Model\Transport"/>
+	<type name="MagePal\CustomSmtp\Model\Transport">
+		<plugin sortOrder="100" name="magePalCustomSmtpTransport" type="MagePal\CustomSmtp\Plugin\Mail\TransportPlugin"/>
+	</type>
+
+	<!-- For Magento Eq 2.2 -->
 	<type name="Magento\Framework\Mail\TransportInterface">
 		<plugin sortOrder="100" name="magePalCustomSmtpTransportInterface" type="MagePal\CustomSmtp\Plugin\Mail\TransportPlugin"/>
 	</type>
