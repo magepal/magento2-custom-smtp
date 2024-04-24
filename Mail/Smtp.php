@@ -5,23 +5,24 @@
  * http://www.magepal.com | support@magepal.com
  */
 
-namespace MagePal\CustomSmtp\Mail\ZF2;
+namespace MagePal\CustomSmtp\Mail;
 
 use Exception;
+use Laminas\Mail\AddressList;
+use Laminas\Mail\Header\HeaderInterface;
+use Laminas\Mail\Message;
+use Laminas\Mail\Transport\Smtp as SmtpTransport;
+use Laminas\Mail\Transport\SmtpOptions;
+use Laminas\Mime\Mime;
 use Magento\Framework\Exception\MailException;
 use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Framework\Mail\MessageInterface;
 use Magento\Framework\Phrase;
 use MagePal\CustomSmtp\Helper\Data;
 use MagePal\CustomSmtp\Model\Store;
-use Zend\Mail\AddressList;
-use Zend\Mail\Message;
-use Zend\Mail\Transport\Smtp as SmtpTransport;
-use Zend\Mail\Transport\SmtpOptions;
 
 /**
  * Class Smtp
- * For Magento >= 2.2.8
  */
 class Smtp
 {
@@ -96,7 +97,9 @@ class Smtp
             }
 
             if (!$zendMessage instanceof Message) {
-                throw new MailException('Not instance of Message');
+                throw new MailException(
+                    __('Not instance of Message')
+                );
             }
         } catch (Exception $e) {
             $zendMessage = Message::fromString($message->getRawMessage());
@@ -125,7 +128,7 @@ class Smtp
 
         foreach ($message->getHeaders()->toArray() as $headerKey => $headerValue) {
             $mailHeader = $message->getHeaders()->get($headerKey);
-            if ($mailHeader instanceof \Zend\Mail\Header\HeaderInterface) {
+            if ($mailHeader instanceof HeaderInterface) {
                 $this->updateMailHeader($mailHeader);
             } elseif ($mailHeader instanceof \ArrayIterator) {
                 foreach ($mailHeader as $header) {
@@ -147,6 +150,7 @@ class Smtp
     }
 
     /**
+     *
      * @param Message $message
      */
     protected function setSender($message)
@@ -259,8 +263,8 @@ class Smtp
      */
     public function updateMailHeader($header)
     {
-        if ($header instanceof \Zend\Mail\Header\HeaderInterface) {
-            if (\Zend\Mime\Mime::isPrintable($header->getFieldValue())) {
+        if ($header instanceof HeaderInterface) {
+            if (Mime::isPrintable($header->getFieldValue())) {
                 $header->setEncoding('ASCII');
             } else {
                 $header->setEncoding('utf-8');

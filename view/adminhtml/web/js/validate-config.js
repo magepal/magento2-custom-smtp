@@ -19,8 +19,8 @@ define([
             var name = field.name.match(/groups\[general\]?(\[groups\]\[debug\])?\[fields\]\[(.*)\]\[value]/);
 
             /**
-             * groups[custom_smtp][groups][debug][fields][email][value]
-             * groups[custom_smtp][fields][password][value]
+             * groups[general][groups][debug][fields][email][value]
+             * groups[general][fields][password][value]
              */
 
             if (name && name.length === 3) {
