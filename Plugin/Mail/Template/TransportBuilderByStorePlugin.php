@@ -2,7 +2,7 @@
 /**
  * Copyright © MagePal LLC. All rights reserved.
  * See COPYING.txt for license details.
- * http://www.magepal.com | support@magepal.com
+ * https://www.magepal.com | support@magepal.com
  */
 namespace MagePal\CustomSmtp\Plugin\Mail\Template;
 
@@ -20,7 +20,6 @@ class TransportBuilderByStorePlugin
 
     /**
      * Sender resolver.
-     *
      * @var SenderResolverInterface
      */
     private $senderResolver;
@@ -38,9 +37,10 @@ class TransportBuilderByStorePlugin
     }
 
     /**
+     * Set the sender email address based on the store context
      * @param TransportBuilderByStore $subject
-     * @param $from
-     * @param $store
+     * @param $from string
+     * @param $store int|null
      * @return array
      * @throws MailException
      */

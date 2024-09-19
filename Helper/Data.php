@@ -2,7 +2,7 @@
 /**
  * Copyright © MagePal LLC. All rights reserved.
  * See COPYING.txt for license details.
- * http://www.magepal.com | support@magepal.com
+ * https://www.magepal.com | support@magepal.com
  */
 
 namespace MagePal\CustomSmtp\Helper;
@@ -24,7 +24,7 @@ class Data extends AbstractHelper
     protected $testConfig = [];
 
     /**
-     * @param null $key
+     * @param $key null|string
      * @return array|mixed|string
      */
     public function getTestConfig($key = null)
@@ -39,7 +39,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param null $fields
+     * @param $fields
      * @return $this
      */
     public function setTestConfig($fields)
@@ -49,7 +49,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param null $store_id
+     * @param $store_id int|null
      * @return bool
      */
     public function isActive($store_id = null)
@@ -67,8 +67,7 @@ class Data extends AbstractHelper
 
     /**
      * Get local client name
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigName($store_id = null)
@@ -78,8 +77,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config password
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigPassword($store_id = null)
@@ -89,8 +87,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config username
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigUsername($store_id = null)
@@ -100,8 +97,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config auth
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigAuth($store_id = null)
@@ -111,8 +107,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config ssl
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigSsl($store_id = null)
@@ -122,8 +117,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config host
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigSmtpHost($store_id = null)
@@ -133,8 +127,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config port
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigSmtpPort($store_id = null)
@@ -144,8 +137,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config reply to
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return bool
      */
     public function getConfigSetReplyTo($store_id = null)
@@ -159,8 +151,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config set return path
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return int
      */
     public function getConfigSetReturnPath($store_id = null)
@@ -170,8 +161,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config return path email
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigReturnPathEmail($store_id = null)
@@ -181,8 +171,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config from
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigSetFrom($store_id = null)
@@ -192,8 +181,7 @@ class Data extends AbstractHelper
 
     /**
      * Get system config from
-     *
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigCustomFromEmail($store_id = null)
@@ -203,9 +191,8 @@ class Data extends AbstractHelper
 
     /**
      * Get system config
-     *
      * @param String path
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return string
      */
     public function getConfigValue($path, $store_id = null)
@@ -224,7 +211,7 @@ class Data extends AbstractHelper
 
     /**
      * @param String path
-     * @param ScopeInterface::SCOPE_STORE $store
+     * @param $store_id int|null
      * @return mixed
      */
     public function getScopeConfigValue($path, $store_id = null)
@@ -251,7 +238,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param int/null $storeId
+     * @param $store_id int|null
      */
     public function setStoreId($storeId = null)
     {

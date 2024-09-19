@@ -2,7 +2,7 @@
 /**
  * Copyright © MagePal LLC. All rights reserved.
  * See COPYING.txt for license details.
- * http://www.magepal.com | support@magepal.com
+ * https://www.magepal.com | support@magepal.com
  */
 
 namespace MagePal\CustomSmtp\Plugin\Mail;
@@ -31,11 +31,12 @@ class TransportPlugin
     /**
      * @var Smtp
      */
-    private SmtpFactory $smtpFactory;
+    private $smtpFactory;
 
     /**
      * @param Data $dataHelper
      * @param Store $storeModel
+     * @param SmtpFactory $smtpFactory
      */
     public function __construct(
         Data $dataHelper,
