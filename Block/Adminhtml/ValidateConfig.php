@@ -13,6 +13,7 @@ use Laminas\Mime\Part as MinePart;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Validator\EmailAddress;
+use Magento\Store\Model\ScopeInterface;
 use MagePal\CustomSmtp\Helper\Data;
 use MagePal\CustomSmtp\Model\Email;
 use Laminas\Mail\Message;
@@ -44,7 +45,7 @@ class ValidateConfig extends Template
     /**
      * @var string
      */
-    protected $storeId;
+    protected $storeId = null;
 
     /**
      * @var string
@@ -166,22 +167,38 @@ class ValidateConfig extends Template
         $request = $this->getRequest();
         $formPostArray = (array) $request->getPost();
 
+        if ($request->getParam('website', false)) {
+            $scopeCode = $request->getParam('website');
+            $scopeType = ScopeInterface::SCOPE_WEBSITE;
+        } else if ($request->getParam('store', false)) {
+            $scopeCode = $request->getParam('store');
+            $scopeType = ScopeInterface::SCOPE_STORE;
+        } else {
+            $scopeCode = null;
+            $scopeType = ScopeInterface::SCOPE_STORE;
+        }
+
         $fields = array_keys($this->configFields);
         foreach ($fields as $field) {
             if (!array_key_exists($field, $formPostArray)) {
-                $this->setConfig($field, $this->_dataHelper->getConfigValue($field), $this->getStoreId());
+                $this->setConfig($field, $this->_dataHelper->getConfigValue($field, $scopeType, $scopeCode));
             } else {
                 $this->setConfig($field, $request->getPost($field));
             }
         }
 
-        //if password mask (6 stars)
-        if ($this->getConfig('password') === '******') {
-            $password = $this->_dataHelper->getConfigPassword($this->getStoreId());
-            $this->setConfig('password', $password);
-        }
+        $this->loadObscuredData($scopeType, $scopeCode);
 
         return $this;
+    }
+
+    public function loadObscuredData($scopeType, $scopeCode)
+    {
+        //if password mask (6 stars)
+        if ($this->getConfig('password') === '******') {
+            $password = $this->_dataHelper->getConfigPassword($scopeType, $scopeCode);
+            $this->setConfig('password', $password);
+        }
     }
 
     /**
@@ -190,7 +207,6 @@ class ValidateConfig extends Template
     protected function init()
     {
         $request = $this->getRequest();
-        $this->setStoreId($request->getParam('store', null));
 
         $this->loadDefaultConfig();
 
@@ -300,6 +316,9 @@ class ValidateConfig extends Template
         return $result;
     }
 
+    /**
+     * @return Smtp
+     */
     public function getMailTransportSmtp()
     {
         $username = $this->getConfig('username');

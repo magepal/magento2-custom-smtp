@@ -1,6 +1,6 @@
 {
     "name": "magepal/magento2-custom-smtp",
-    "version": "3.5.0",
+    "version": "3.5.1",
     "description":"Magento 2 SMTP Extension - Configure Magento 2 to send all transactional email using Gmail, G Suite, Amazon SES, Office360, Mailgun, SendGrid, Mandrill or any other SMTP servers",
     "type": "magento2-module",
     "keywords": [
