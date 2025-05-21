@@ -35,9 +35,9 @@
                     <hr class="magepal-hr" />
                   ]]>
                 </comment>
-                <field id="composer_version" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Composer Version</label>
-                    <frontend_model>MagePal\CustomSmtp\Block\Adminhtml\System\Config\Form\Composer\Version</frontend_model>
+                <field id="MagePal_CustomSmtp" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Custom SMTP - Composer Version</label>
+                    <frontend_model>MagePal\Core\Block\Adminhtml\System\Config\Composer\Version</frontend_model>
                 </field>
                 <field id="active" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable</label>
