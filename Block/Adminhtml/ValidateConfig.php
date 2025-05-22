@@ -11,6 +11,7 @@ use Exception;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Validator\EmailAddress;
+use Magento\Store\Model\ScopeInterface;
 use MagePal\CustomSmtp\Helper\Data;
 use MagePal\CustomSmtp\Model\Email;
 use Zend_Mail;
