@@ -286,8 +286,6 @@ class ValidateConfig extends Template
             }
         }
 
-        $transport = $this->getMailTransportSmtp();
-
         $from = trim($this->getConfig('from_email'));
         $from = filter_var($from, FILTER_VALIDATE_EMAIL) ? $from : $username;
         $this->fromAddress = filter_var($username, FILTER_VALIDATE_EMAIL) ? $username : $from;
@@ -306,6 +304,8 @@ class ValidateConfig extends Template
         $result = $this->error();
 
         try {
+            $transport = $this->getMailTransportSmtp();
+
             //only way to prevent zend from giving an error
             if (!$mail->send($transport) instanceof Zend_Mail) {
                 $result =  $this->error(true, __('Invalid class, not instance of Zend Mail'));
