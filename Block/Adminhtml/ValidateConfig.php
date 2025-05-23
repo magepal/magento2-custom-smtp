@@ -290,7 +290,6 @@ class ValidateConfig extends Template
         $this->fromAddress = filter_var($username, FILTER_VALIDATE_EMAIL) ? $username : $from;
         $htmlBody = $this->_email->setTemplateVars(['hash' => $this->hash])->getEmailBody();
 
-        $transport = $this->getMailTransportSmtp();
 
         $bodyMessage    = new MinePart($htmlBody);
         $bodyMessage->type = 'text/html';
@@ -305,15 +304,14 @@ class ValidateConfig extends Template
             ->setBody($body)
             ->setEncoding('UTF-8');
 
-        $result = $this->error();
-
         try {
+            $transport = $this->getMailTransportSmtp();
             $transport->send($message);
         } catch (Exception $e) {
-            $result =  $this->error(true, __($e->getMessage()));
+            return $this->error(true, __($e->getMessage()));
         }
 
-        return $result;
+        return $this->error();
     }
 
     /**
