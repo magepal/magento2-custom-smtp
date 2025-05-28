@@ -260,7 +260,7 @@ class Data extends AbstractHelper
      */
     public function getScopeConfigValue($path, $scopeType = null, $scopeCode = null)
     {
-        //use global store
+        //use global store id
         if ($scopeType === null) {
             $scopeType = ScopeInterface::SCOPE_STORE;
         }

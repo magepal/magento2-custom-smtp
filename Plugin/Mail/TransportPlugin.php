@@ -9,13 +9,12 @@ namespace MagePal\CustomSmtp\Plugin\Mail;
 
 use Closure;
 use Magento\Framework\Exception\MailException;
-use Magento\Framework\Mail\EmailMessageInterface;
-use Magento\Framework\Mail\Message;
 use Magento\Framework\Mail\TransportInterface;
 use MagePal\CustomSmtp\Helper\Data;
 use MagePal\CustomSmtp\Mail\SmtpFactory;
 use MagePal\CustomSmtp\Mail\Smtp;
 use MagePal\CustomSmtp\Model\Store;
+use Symfony\Component\Mime\Message as SymfonyMessage;
 
 class TransportPlugin
 {
@@ -62,9 +61,9 @@ class TransportPlugin
                 $this->storeModel->setStoreId($subject->getStoreId());
             }
 
-            $message = $subject->getMessage();
+            $message = $subject->getMessage()->getSymfonyMessage();
 
-            if ($message instanceof Message || $message instanceof EmailMessageInterface) {
+            if ($message instanceof SymfonyMessage) {
                 /** @var Smtp $smtp */
                 $smtp = $this->smtpFactory->create(
                     ['dataHelper' => $this->dataHelper, 'storeModel' => $this->storeModel]

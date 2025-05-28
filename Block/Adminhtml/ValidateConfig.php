@@ -8,17 +8,17 @@
 namespace MagePal\CustomSmtp\Block\Adminhtml;
 
 use Exception;
-use Laminas\Mime\Message as MineMessage;
-use Laminas\Mime\Part as MinePart;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Validator\EmailAddress;
 use Magento\Store\Model\ScopeInterface;
 use MagePal\CustomSmtp\Helper\Data;
 use MagePal\CustomSmtp\Model\Email;
-use Laminas\Mail\Message;
-use Laminas\Mail\Transport\Smtp;
-use Laminas\Mail\Transport\SmtpOptions;
+use Symfony\Component\Mailer\Transport\Smtp\Auth\LoginAuthenticator;
+use Symfony\Component\Mailer\Transport\Smtp\Auth\PlainAuthenticator;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+use Symfony\Component\Mime\Email as SymfonyEmail;
+use Symfony\Component\Mime\Address;
 
 class ValidateConfig extends Template
 {
@@ -123,7 +123,7 @@ class ValidateConfig extends Template
     }
 
     /**
-     * @return int \ null
+     * @return string|null
      */
     public function getStoreId()
     {
@@ -192,6 +192,11 @@ class ValidateConfig extends Template
         return $this;
     }
 
+    /**
+     * @param $scopeType
+     * @param $scopeCode
+     * @return $this
+     */
     public function loadObscuredData($scopeType, $scopeCode)
     {
         //if password mask (6 stars)
@@ -199,6 +204,8 @@ class ValidateConfig extends Template
             $password = $this->_dataHelper->getConfigPassword($scopeType, $scopeCode);
             $this->setConfig('password', $password);
         }
+
+        return $this;
     }
 
     /**
@@ -260,9 +267,7 @@ class ValidateConfig extends Template
     }
 
     /**
-     * Todo: update to new Zend Framework SMTP
      * @return array
-     * @throws \Exception
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function validateServerEmailSetting()
@@ -290,24 +295,16 @@ class ValidateConfig extends Template
         $this->fromAddress = filter_var($username, FILTER_VALIDATE_EMAIL) ? $username : $from;
         $htmlBody = $this->_email->setTemplateVars(['hash' => $this->hash])->getEmailBody();
 
-        $transport = $this->getMailTransportSmtp();
-
-        $bodyMessage    = new MinePart($htmlBody);
-        $bodyMessage->type = 'text/html';
-
-        $body = new MineMessage();
-        $body->addPart($bodyMessage);
-
-        $message = new Message();
-        $message->addTo($this->toAddress, 'MagePal SMTP')
-            ->addFrom($this->fromAddress, $name)
-            ->setSubject('Hello from MagePal SMTP (1 of 2)')
-            ->setBody($body)
-            ->setEncoding('UTF-8');
+        $message = new SymfonyEmail();
+        $message->to(new Address($this->toAddress, 'MagePal SMTP'))
+            ->from(new Address($this->fromAddress, $name))
+            ->subject('Hello from MagePal SMTP (1 of 2)')
+            ->html($htmlBody);
 
         $result = $this->error();
 
         try {
+            $transport = $this->getMailTransportSmtp();
             $transport->send($message);
         } catch (Exception $e) {
             $result =  $this->error(true, __($e->getMessage()));
@@ -317,39 +314,46 @@ class ValidateConfig extends Template
     }
 
     /**
-     * @return Smtp
+     * @return EsmtpTransport
      */
     public function getMailTransportSmtp()
     {
         $username = $this->getConfig('username');
         $password = $this->getConfig('password');
         $auth = strtolower($this->getConfig('auth'));
+        $name = $this->getConfig('name');
+        $host = $this->getConfig('smtphost');
+        $port = $this->getConfig('smtpport');
 
-        $optionsArray = [
-            'name' => $this->getConfig('name'),
-            'host' => $this->getConfig('smtphost'),
-            'port' => $this->getConfig('smtpport')
-        ];
+        $tls = false;
+        if ($auth !== 'none') {
+            $tls = true;
+        }
+
+        $transport = new EsmtpTransport($host, $port, $tls);
 
         if ($auth != 'none') {
-            $optionsArray['connection_class'] = $auth;
-            $optionsArray['connection_config'] = [
-                'username' => $username,
-                'password' => $password,
-            ];
+            if ($username) {
+                $transport->setUsername($username);
+            }
+
+            if ($password) {
+                $transport->setPassword($password);
+            }
         }
 
-        $ssl = $this->getConfig('ssl');
-        if ($ssl != 'none') {
-            $optionsArray = array_merge_recursive(
-                ['connection_config' => ['ssl' => $ssl]],
-                $optionsArray
-            );
+        switch ($auth) {
+            case 'plain':
+                $transport->setAuthenticators([new PlainAuthenticator()]);
+                break;
+            case 'login':
+                $transport->setAuthenticators([new LoginAuthenticator()]);
+                break;
+            case 'none':
+                break;
+            default:
+                throw new \InvalidArgumentException('Invalid authentication type: ' . $auth);
         }
-
-        $options   = new SmtpOptions($optionsArray);
-        $transport = new Smtp();
-        $transport->setOptions($options);
 
         return $transport;
     }
