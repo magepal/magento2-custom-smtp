@@ -9,7 +9,6 @@ namespace MagePal\CustomSmtp\Mail;
 
 use Exception;
 use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport\TransportInterface as SymfonyTransportInterface;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Symfony\Component\Mailer\Transport\Smtp\Auth\LoginAuthenticator;
 use Symfony\Component\Mailer\Transport\Smtp\Auth\PlainAuthenticator;
@@ -126,7 +125,7 @@ class Smtp
                     'Sender',
                     [new Address($setFromEmail, $name)]
                 );
-        }
+            }
         }
     }
 
@@ -165,7 +164,7 @@ class Smtp
                     'reply-to',
                     [new Address($returnPathEmail, $name)]
                 );
-        }
+            }
         }
     }
 
@@ -185,10 +184,11 @@ class Smtp
     }
 
     /**
-     * @param Data $dataHelper
-     * @return SymfonyTransportInterface
+     * Get the transport instance for sending emails.
+     * @return EsmtpTransport
+     * @throws \InvalidArgumentException
      */
-    public function getTransport(): SymfonyTransportInterface
+    public function getTransport()
     {
         $dataHelper = $this->dataHelper;
 
@@ -203,7 +203,6 @@ class Smtp
             $tls = true;
         }
 
-        /** @var EsmtpTransport $transport */
         $transport = new EsmtpTransport($host, $port, $tls);
 
         if ($username) {
