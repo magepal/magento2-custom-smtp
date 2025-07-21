@@ -197,11 +197,9 @@ class Smtp
         $username = $dataHelper->getConfigUsername();
         $password = $dataHelper->getConfigPassword();
         $auth = strtolower($dataHelper->getConfigAuth());
+        $ssl = $dataHelper->getConfigSsl();
 
-        $tls = false;
-        if ($auth !== 'none') {
-            $tls = true;
-        }
+        $tls = ($auth !== 'none') && ($ssl !== 'starttls');
 
         $transport = new EsmtpTransport($host, $port, $tls);
 
