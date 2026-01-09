@@ -156,13 +156,13 @@ class Smtp
 
         if (empty($message->getHeaders()->get('reply-to')?->getAddresses()) && $dataHelper->getConfigSetReplyTo()) {
             if ($returnPathEmail instanceof Address) {
-                $message->getHeaders()->addMailboxHeader('reply-to', $returnPathEmail);
+                $message->getHeaders()->addMailboxListHeader('reply-to', [$returnPathEmail]);
             } elseif (!empty($returnPathEmail)) {
                 $name = $messageFromAddress instanceof Address ? $messageFromAddress->getName() : $returnPathEmail;
 
-                $message->getHeaders()->addMailboxHeader(
+                $message->getHeaders()->addMailboxListHeader(
                     'reply-to',
-                    new Address($returnPathEmail, $name)
+                    [new Address($returnPathEmail, $name)]
                 );
             }
         }
